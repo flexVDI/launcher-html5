@@ -1,0 +1,120 @@
+<!--
+   Copyright (C) 2012 by Jeremy P. White <jwhite@codeweavers.com>
+
+   This file is part of spice-html5.
+
+   spice-html5 is free software: you can redistribute it and/or modify
+   it under the terms of the GNU Lesser General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   spice-html5 is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public License
+   along with spice-html5.  If not, see <http://www.gnu.org/licenses/>.
+
+   --------------------------------------------------
+    Spice Javascript client template.
+    Refer to main.js for more detailed information
+   --------------------------------------------------
+
+-->
+
+<!doctype html>
+<html>
+    <head>
+	<meta charset="utf-8">
+	<title>flexVM</title>
+	<meta name="description" content="flexVM">
+	<meta name="keywords" content="flexVM">
+	<meta name="author" content="Nologin">
+    <script src="js/spicearraybuffer.js"></script> 
+    <script src="js/enums.js"></script>
+    <script src="js/atKeynames.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/png.js"></script>
+    <script src="js/lz.js"></script>
+    <script src="js/quic.js"></script>
+    <script src="js/bitmap.js"></script>
+    <script src="js/spicedataview.js"></script>
+    <script src="js/spicetype.js"></script>
+    <script src="js/spicemsg.js"></script>
+    <script src="js/wire.js"></script>
+    <script src="js/spiceconn.js"></script>
+    <script src="js/display.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/inputs.js"></script>
+    <script src="js/simulatecursor.js"></script>
+    <script src="js/cursor.js"></script>
+    <script src="js/thirdparty/jsbn.js"></script>
+    <script src="js/thirdparty/rsa.js"></script>
+    <script src="js/thirdparty/prng4.js"></script>
+    <script src="js/thirdparty/rng.js"></script>
+    <script src="js/thirdparty/sha1.js"></script>
+    <script src="js/ticket.js"></script>
+	<script src="../js/utils.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/main.css" />
+
+        <script>
+            var host = null, port = null;
+            var sc;
+
+            function spice_error(e)
+            {
+                disconnect();
+            }
+
+            function connect(){
+				var data = readCookie("token");
+				if(data){
+					data = JSON.parse(data);
+					var scheme = "ws://", uri;
+					if (sc) {
+						sc.stop();
+					}
+
+					uri = scheme + data.spice_address + ":" + data.spice_port;
+					try{
+						sc = new SpiceMainConn({uri: uri, screen_id: "spice-screen", dump_id: "debug-div",
+                                message_id: "message-div", password: data.spice_password, onerror: spice_error });
+					}
+					catch (e){
+						alert(e.toString());
+						disconnect();
+					}
+				}
+			}
+
+            function disconnect()
+            {
+                console.log(">> disconnect");
+                if (sc) {
+                    sc.stop();
+                }
+                console.log("<< disconnect");
+            }
+			function closeConnection(){
+				eraseCookie("token");
+				disconnect();
+				document.location.replace("../index.html");
+			}
+
+            connect();
+        </script>
+
+    </head>
+    <body>
+        <div id="header" class="clearfix">
+            <span class="logotype">flex<span>VM</span></span>
+			<a href="javascript:void(0)" class="btn" onclick="closeConnection()">disconnect</a>
+        </div>
+        <div id="spice-area" class="wrapper">
+            <div id="spice-screen" class="spice-screen"></div>
+        </div>
+
+        <div id="message-div" class="wrapper spice-message"></div>
+    </body>
+</html>

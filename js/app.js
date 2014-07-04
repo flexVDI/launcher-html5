@@ -1,5 +1,4 @@
 jQuery(function($){
-	//('#sec-1').tooltip();
 
 	$.fn.serializeObject = function()
 	{
@@ -32,9 +31,16 @@ jQuery(function($){
 		$('#bot').on('click',function(){
 			event.preventDefault();
 			if($('#user_login').val() !== '' && $('#pass_login').val() !== ''){
-				$.post(this.form.action,JSON.stringify($(this.form).serializeObject()))
+				var managerAPI = this.form.action;
+				console.log(managerAPI);
+				/*var managerAPI = "php/proxy.php";
+				$.post(managerAPI,{data:JSON.stringify($(this.form).serializeObject())})*/
+				$.post(managerAPI,JSON.stringify($(this.form).serializeObject()))
 				.done(function(data){
-					console.log('ok');
+					console.log(data);
+					eraseCookie("token");
+					createCookie("token",JSON.stringify(data),1);
+					document.location.href='spice/console.html';
 				})
 				.fail(function(jqXHR){
 					$( "#msgbox" ).dialog( "option","title","Error "+jqXHR.status);
