@@ -82,16 +82,26 @@ SpiceDisplayConn.prototype.process_channel_message = function(msg)
 
         DEBUG > 1 && this.log_draw("DrawCopy", draw_copy);
 
-        if (! draw_copy.base.box.is_same_size(draw_copy.data.src_area))
+        if (! draw_copy.base.box.is_same_size(draw_copy.data.src_area)) {
             this.log_warn("FIXME: DrawCopy src_area is a different size than base.box; we do not handle that yet.");
-        if (draw_copy.base.clip.type != SPICE_CLIP_TYPE_NONE)
+	    //return true;
+	}
+        if (draw_copy.base.clip.type != SPICE_CLIP_TYPE_NONE) {
             this.log_warn("FIXME: DrawCopy we don't handle clipping yet");
-        if (draw_copy.data.rop_descriptor != SPICE_ROPD_OP_PUT)
+	    //return false;
+	}
+        if (draw_copy.data.rop_descriptor != SPICE_ROPD_OP_PUT) {
             this.log_warn("FIXME: DrawCopy we don't handle ropd type: " + draw_copy.data.rop_descriptor);
-        if (draw_copy.data.mask.flags)
+	    //return true;
+	}
+        if (draw_copy.data.mask.flags) {
             this.log_warn("FIXME: DrawCopy we don't handle mask flag: " + draw_copy.data.mask.flags);
-        if (draw_copy.data.mask.bitmap)
+	    return true;
+	}
+        if (draw_copy.data.mask.bitmap) {
             this.log_warn("FIXME: DrawCopy we don't handle mask");
+	    return true;
+	}
 
         if (draw_copy.data && draw_copy.data.src_bitmap)
         {
@@ -241,7 +251,8 @@ SpiceDisplayConn.prototype.process_channel_message = function(msg)
 
                     var canvas = this.surfaces[draw_copy.base.surface_id].canvas;
                     img.alpha_img = convert_spice_lz_to_web(canvas.context,
-                                            draw_copy.data.src_bitmap.jpeg_alpha.alpha);
+                                            draw_copy.data.src_bitmap.jpeg_alpha.alpha,
+					    draw_copy.data.src_bitmap.top_down != 1);
                 }
                 img.onload = handle_draw_jpeg_onload;
                 img.src = tmpstr;
@@ -288,7 +299,8 @@ SpiceDisplayConn.prototype.process_channel_message = function(msg)
                     this.log_warn("FIXME: Implement non top down support for lz_rgb");
 
                 var source_img = convert_spice_lz_to_web(canvas.context,
-                                            draw_copy.data.src_bitmap.lz_rgb);
+                                            draw_copy.data.src_bitmap.lz_rgb,
+				            draw_copy.data.src_bitmap.lz_rgb.top_down != 1);
                 if (! source_img)
                 {
                     this.log_warn("FIXME: Unable to interpret bitmap of type: " + 
@@ -325,8 +337,10 @@ SpiceDisplayConn.prototype.process_channel_message = function(msg)
 
         if (draw_fill.data.rop_descriptor != SPICE_ROPD_OP_PUT)
             this.log_warn("FIXME: DrawFill we don't handle ropd type: " + draw_fill.data.rop_descriptor);
-        if (draw_fill.data.mask.flags)
+        if (draw_fill.data.mask.flags) {
             this.log_warn("FIXME: DrawFill we don't handle mask flag: " + draw_fill.data.mask.flags);
+	    return true;
+	}
         if (draw_fill.data.mask.bitmap)
             this.log_warn("FIXME: DrawFill we don't handle mask");
 
@@ -359,8 +373,17 @@ SpiceDisplayConn.prototype.process_channel_message = function(msg)
             this.surfaces[draw_fill.base.surface_id].draw_count++;
 
         }
-        else
-        {
+        else if (draw_fill.data.brush.type == SPICE_BRUSH_TYPE_PATTERN) {
+            var color = 0xffcccccc;
+            var color_str = "rgb(" + (color >> 16) + ", " + ((color >> 8) & 0xff) + ", " + (color & 0xff) + ")";
+            this.surfaces[draw_fill.base.surface_id].canvas.context.fillStyle = color_str;
+
+            this.surfaces[draw_fill.base.surface_id].canvas.context.fillRect(
+                draw_fill.base.box.left, draw_fill.base.box.top,
+                draw_fill.base.box.right - draw_fill.base.box.left,
+                draw_fill.base.box.bottom - draw_fill.base.box.top);
+	}
+        else {
             this.log_warn("FIXME: DrawFill can't handle brush type: " + draw_fill.data.brush.type);
         }
         return true;
@@ -446,8 +469,9 @@ SpiceDisplayConn.prototype.process_channel_message = function(msg)
             /* This .save() is done entirely to enable SPICE_MSG_DISPLAY_RESET */
             canvas.context.save();
             document.getElementById(this.parent.screen_id).appendChild(canvas);
-            document.getElementById(this.parent.screen_id).setAttribute('width', m.surface.width);
-            document.getElementById(this.parent.screen_id).setAttribute('height', m.surface.height);
+
+            /* We're going to leave width dynamic, but correctly set the height */
+            document.getElementById(this.parent.screen_id).style.height = m.surface.height + "px";
             this.hook_events();
         }
         return true;
@@ -690,7 +714,7 @@ SpiceDisplayConn.prototype.hook_events = function()
         canvas.addEventListener('keyup', handle_keyup);
         canvas.addEventListener('mouseout', handle_mouseout);
         canvas.addEventListener('mouseover', handle_mouseover);
-        canvas.addEventListener('mousewheel', handle_mousewheel);
+        canvas.addEventListener('wheel', handle_mousewheel);
         canvas.focus();
     }
 }
@@ -708,7 +732,7 @@ SpiceDisplayConn.prototype.unhook_events = function()
         canvas.removeEventListener('keyup', handle_keyup);
         canvas.removeEventListener('mouseout', handle_mouseout);
         canvas.removeEventListener('mouseover', handle_mouseover);
-        canvas.removeEventListener('mousewheel', handle_mousewheel);
+        canvas.removeEventListener('wheel', handle_mousewheel);
     }
 }
 

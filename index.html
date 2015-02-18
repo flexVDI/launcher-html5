@@ -1,48 +1,72 @@
 <!doctype html>
 <head>
-	<meta charset="utf-8">
-	<title>flexVM</title>
-	<meta name="description" content="flexVM">
-	<meta name="keywords" content="flexVM">
-	<meta name="author" content="Nologin">
-	<link rel="shortcut icon" href="favicon.ico">
-    <link rel="apple-touch-icon-precomposed" href="apple-touch-icon.png">
-	<link rel="stylesheet/less" href="./less/main.less" type="text/css" />
-    <script src="./lib/less/less-1.7.0.min.js"></script>
-	<!--<script type="text/javascript" charset="utf-8">
-		less.env = "development";
-		less.watch();
-	</script>-->
+  <meta charset="utf-8">
+  <title>flexVM</title>
+  <meta name="description" content="flexVDI">
+  <meta name="keywords" content="flexVDI">
+  <meta name="author" content="flexVDI">
+  <link rel="shortcut icon" href="favicon.ico">
+  <link rel="apple-touch-icon-precomposed" href="apple-touch-icon.png">
+  <link rel="stylesheet/less" href="./less/main.less" type="text/css" />
+  <link rel="stylesheet" href="./css/jquery-ui-menu.css" />
+  <script src="./lib/less/less-1.7.0.min.js"></script>
+  <!--<script type="text/javascript" charset="utf-8">
+      less.env = "development";
+      less.watch();
+      </script>-->
 </head>
 <body class="login">
-	<div class="shadow-bck">
-		<section id="login" class="login_content clearfix">
-				<h1 class="clearfix"><span class="logotype">flex<span>VM</span></span></h1>
-				<form class="loginForm" id="loginform" name="loginform" method="POST" action="https://manager.flexvdi.es:443/vdi/desktop">
-					<div id="tabs" class="clearfix mrq_gen mrq_trian">
-						<p class="description">
-							Nulla iaculis sapien quis auctor sodales. Vestibulum ipsum enim, rhoncus in placerat et, sagittis non dui. Suspendisse vulputate nibh magna, sed tristique quam volutpat sed.
-						<p>
-						<div id="access_form" class="login_internal">
-							<input type="hidden" name="hwaddress" value="webclient">
-							<input type="hidden" name="desktop" value="windows7">
-							<label>USUARIO</label>
-	            			<input type="text" class="input user" id="user_login" name="username" value="vdi01">           
-							<label>PASSWORD</label>
-			    			<input type="password" class="input pass" id="pass_login" name="password" value="kiosko.123">
-						</div>
-					</div>
-					<p class="footer">
-						<button id="bot">ACCESO</button>
-						<span class="copy">© 2014 <a href="http://www.nologin.es">Nologin Consulting</a> | v0.9.13</span>
-					</p>
-				</form>
-		</section>
+  <div class="shadow-bck">
+    <section id="login" class="login_content clearfix">
+      <div class="logotype"><img src="img/general/icon_logo.png"></div>
+      <h1 class="clearfix"><span class="logotype"></h1>
+      <form class="loginForm" id="loginform" name="loginform" >
+	<div id="tabs" class="clearfix mrq_gen mrq_trian">
+	  <p class="warning">
+	    Por favor, tenga en cuenta que su experiencia puede variar en función del ancho de banda que disponga y del navegador que esté empleando. <strong>Le recomendamos que acceda con una versión reciente de Firefox o Chrome</strong>.
+	  <p>
+	  <p class="description">
+	    Introduzca sus credenciales:
+	  <p>
+	    <div id="access_form" class="login_internal">
+	      <input type="hidden" name="resolution" id="res" value="1024x768">
+	      <input type="hidden" name="hwaddress" id="hwaddress" value="webclient">
+	      <input type="hidden" name="desktop" id="desktop" value="">
+	      <label>USUARIO</label>
+	      <input type="text" class="input user" id="user_login" name="username" value="">           
+	      <label>PASSWORD</label>
+	      <input type="password" class="input pass" id="pass_login" name="password" value="">
+	      <div class="resolution_list">
+		Resolución del escritorio:
+		<select id="resolution">
+		  <option value="1" data-res="1024x768">1024x768</option>
+		  <option value="2" data-res="1280x1024">1280x1024</option>
+		  <option value="3" data-res="1360x768">1360x768</option>
+		  <option value="4" data-res="1440x900">1440x900</option>
+		</select>
+	      </div>
+	    </div>
 	</div>
-	<div id="msgbox" title="Envio correcto" style="display:none"></div>
-	<script type="text/javascript" src="js/jquery-1.11.0.min.js"></script>
-	<script type="text/javascript" src="js/jquery-ui-1.10.4.custom.min.js"></script>
-	<script type="text/javascript" src="js/utils.js"></script>
-	<script type="text/javascript" src="js/app.js"></script>
+	<p class="footer">
+	  <a href="javascript:void(0)" id="bot">ENTRAR</a>
+	  <span class="copy">© 2015 <a href="http://www.flexvdi.es">Flexible Software Solutions S.L.</a> | v1.8</span>
+	</p>
+      </form>
+    </section>
+  </div>
+  <div id="msgbox" title="Envio correcto" style="display:none">
+    <ul id="menu">
+      <li><a href="#">Windows XP SP3</a></li>
+      <li><a href="#">Windows 7</a></li>
+      <li><a href="#">OpenSuSE 13.2 (GNOME)</a></li>
+      <li><a href="#">OpenSuSE 13.2 (KDE)</a></li>
+    </ul>
+  </div>
+  <div id="msgerr" title="Error" style="display:none" />
+  <script type="text/javascript" src="js/spin.min.js"></script>
+  <script type="text/javascript" src="js/jquery-1.11.0.min.js"></script>
+  <script type="text/javascript" src="js/jquery-ui-1.10.4.custom.min.js"></script>
+  <script type="text/javascript" src="js/utils.js"></script>
+  <script type="text/javascript" src="js/app.js"></script>
 </body>
 </html>

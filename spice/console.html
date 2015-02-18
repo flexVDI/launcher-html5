@@ -26,37 +26,37 @@
 <!doctype html>
 <html>
     <head>
-	<meta charset="utf-8">
-	<title>flexVM</title>
-	<meta name="description" content="flexVM">
-	<meta name="keywords" content="flexVM">
-	<meta name="author" content="Nologin">
-    <script src="js/spicearraybuffer.js"></script> 
-    <script src="js/enums.js"></script>
-    <script src="js/atKeynames.js"></script>
-    <script src="js/utils.js"></script>
-    <script src="js/png.js"></script>
-    <script src="js/lz.js"></script>
-    <script src="js/quic.js"></script>
-    <script src="js/bitmap.js"></script>
-    <script src="js/spicedataview.js"></script>
-    <script src="js/spicetype.js"></script>
-    <script src="js/spicemsg.js"></script>
-    <script src="js/wire.js"></script>
-    <script src="js/spiceconn.js"></script>
-    <script src="js/display.js"></script>
-    <script src="js/main.js"></script>
-    <script src="js/inputs.js"></script>
-    <script src="js/simulatecursor.js"></script>
-    <script src="js/cursor.js"></script>
-    <script src="js/thirdparty/jsbn.js"></script>
-    <script src="js/thirdparty/rsa.js"></script>
-    <script src="js/thirdparty/prng4.js"></script>
-    <script src="js/thirdparty/rng.js"></script>
-    <script src="js/thirdparty/sha1.js"></script>
-    <script src="js/ticket.js"></script>
-	<script src="../js/utils.js"></script>
-    <link rel="stylesheet" type="text/css" href="css/main.css" />
+
+        <title>flexVM Client</title>
+        <script src="spicearraybuffer.js"></script> 
+        <script src="enums.js"></script> 
+        <script src="atKeynames.js"></script> 
+        <script src="utils.js"></script> 
+        <script src="png.js"></script> 
+        <script src="lz.js"></script> 
+        <script src="quic.js"></script> 
+        <script src="bitmap.js"></script> 
+        <script src="spicedataview.js"></script> 
+        <script src="spicetype.js"></script> 
+        <script src="spicemsg.js"></script> 
+        <script src="wire.js"></script> 
+        <script src="spiceconn.js"></script> 
+        <script src="display.js"></script> 
+        <script src="main.js"></script> 
+        <script src="inputs.js"></script> 
+        <script src="webm.js"></script>
+        <script src="playback.js"></script>
+        <script src="simulatecursor.js"></script>
+        <script src="cursor.js"></script> 
+        <script src="thirdparty/jsbn.js"></script>
+        <script src="thirdparty/rsa.js"></script>
+        <script src="thirdparty/prng4.js"></script>
+        <script src="thirdparty/rng.js"></script>
+        <script src="thirdparty/sha1.js"></script>
+        <script src="ticket.js"></script>
+        <script src="resize.js"></script>
+        <script src="filexfer.js"></script>
+        <link rel="stylesheet" type="text/css" href="spice.css" />
 
         <script>
             var host = null, port = null;
@@ -67,26 +67,63 @@
                 disconnect();
             }
 
-            function connect(){
-				var data = readCookie("token");
-				if(data){
-					data = JSON.parse(data);
-					var scheme = "ws://", uri;
-					if (sc) {
-						sc.stop();
-					}
+            function read_cookie(name) {
+                var nameEQ = escape(name) + "=";
+                var ca = document.cookie.split(';');
+                for (var i = 0; i < ca.length; i++) {
+                    var c = ca[i];
+                    while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+                    if (c.indexOf(nameEQ) === 0) return unescape(c.substring(nameEQ.length, c.length));
+                }
+                return null;
+            }
 
-					uri = scheme + data.spice_address + ":" + data.spice_port;
-					try{
-						sc = new SpiceMainConn({uri: uri, screen_id: "spice-screen", dump_id: "debug-div",
-                                message_id: "message-div", password: data.spice_password, onerror: spice_error });
-					}
-					catch (e){
-						alert(e.toString());
-						disconnect();
-					}
-				}
-			}
+            function connect()
+            {
+                var data = read_cookie("token")
+                console.log(data);
+
+                if (data) {
+                    data = JSON.parse(data);
+
+                    var scheme = "ws://", uri;
+
+                    uri = scheme + data.spice_address + ":80?token=" + data.spice_port;
+                    password = data.spice_password;
+                } else {
+                    var host, port, password, scheme = "ws://", uri;
+
+                    host = document.getElementById("host").value; 
+                    port = document.getElementById("port").value; 
+                    password = document.getElementById("password").value;
+
+                    if ((!host) || (!port)) {
+                        console.log("must set host and port");
+                        return;
+                    }
+
+                    uri = scheme + host + ":" + port;
+                }
+
+                if (sc) {
+                    sc.stop();
+                }
+
+                //document.getElementById('connectButton').innerHTML = "Stop";
+                //document.getElementById('connectButton').onclick = disconnect;
+
+                try
+                {
+                    sc = new SpiceMainConn({uri: uri, screen_id: "spice-screen", dump_id: "debug-div", 
+                                message_id: "message-div", password: password, onerror: spice_error, onagent: agent_connected });
+                }
+                catch (e)
+                {
+                    alert(e.toString());
+                    disconnect();
+                }
+
+            }
 
             function disconnect()
             {
@@ -94,27 +131,70 @@
                 if (sc) {
                     sc.stop();
                 }
+                document.getElementById('connectButton').innerHTML = "Start";
+                document.getElementById('connectButton').onclick = connect;
+                if (window.File && window.FileReader && window.FileList && window.Blob)
+                {
+                    var spice_xfer_area = document.getElementById('spice-xfer-area');
+                    document.getElementById('spice-area').removeChild(spice_xfer_area);
+                    document.getElementById('spice-area').removeEventListener('dragover', handle_file_dragover, false);
+                    document.getElementById('spice-area').removeEventListener('drop', handle_file_drop, false);
+                }
                 console.log("<< disconnect");
             }
-			function closeConnection(){
-				eraseCookie("token");
-				disconnect();
-				document.location.replace("../index.html");
-			}
 
+            function agent_connected(sc)
+            {
+                window.addEventListener('resize', handle_resize);
+                window.spice_connection = this;
+
+                resize_helper(this);
+
+                if (window.File && window.FileReader && window.FileList && window.Blob)
+                {
+                    var spice_xfer_area = document.createElement("div");
+                    spice_xfer_area.setAttribute('id', 'spice-xfer-area');
+                    document.getElementById('spice-area').appendChild(spice_xfer_area);
+                    document.getElementById('spice-area').addEventListener('dragover', handle_file_dragover, false);
+                    document.getElementById('spice-area').addEventListener('drop', handle_file_drop, false);
+                }
+                else
+                {
+                    console.log("File API is not supported");
+                }
+            }
             connect();
         </script>
 
     </head>
+
     <body>
-        <div id="header" class="clearfix">
-            <span class="logotype">flex<span>VM</span></span>
-			<a href="javascript:void(0)" class="btn" onclick="closeConnection()">disconnect</a>
-        </div>
-        <div id="spice-area" class="wrapper">
+
+        <!-- <div id="login">
+            <span class="logo">flexVM Client</span>
+            <button id="connectButton" onclick="connect();">Desconectar</button>
+        </div> -->
+
+        <div id="spice-area">
             <div id="spice-screen" class="spice-screen"></div>
         </div>
 
-        <div id="message-div" class="wrapper spice-message"></div>
+        <div id="message-div" class="spice-message"></div>
+
+        <!-- <div id="debug-div"> -->
+        <!-- If DUMPXXX is turned on, dumped images will go here -->
+        <!-- </div> -->
+
+        <script>
+            var resolution = read_cookie("resolution")
+            var width = resolution.substring(0, resolution.indexOf('x'));
+            var height = resolution.substring(resolution.indexOf('x') + 1);
+            var w = parseInt(width) + 20;
+            var h = parseInt(height) + 20;
+            document.getElementById("spice-area").style.width = w.toString() + 'px';
+            document.getElementById("spice-area").style.height = h.toString() + 'px';
+            document.getElementById("spice-screen").style.width = width.toString() + 'px';
+            document.getElementById("spice-screen").style.height = height.toString() + 'px';
+        </script>
     </body>
 </html>
