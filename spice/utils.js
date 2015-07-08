@@ -196,14 +196,14 @@ common_scanmap[98]                 = KEY_KP_2;
 common_scanmap[99]                 = KEY_KP_3;
 common_scanmap[96]                 = KEY_KP_0;
 common_scanmap[110]                = KEY_KP_Decimal;
-common_scanmap[191]                = KEY_Slash;
+//common_scanmap[191]                = KEY_Slash;
 common_scanmap[190]                = KEY_Period;
 common_scanmap[188]                = KEY_Comma;
-common_scanmap[220]                = KEY_BSlash;
-common_scanmap[192]                = KEY_Tilde;
-common_scanmap[222]                = KEY_Quote;
-common_scanmap[219]                = KEY_LBrace;
-common_scanmap[221]                = KEY_RBrace;
+//common_scanmap[220]                = KEY_BSlash;
+//common_scanmap[222]                = KEY_Tilde;
+//common_scanmap[192]                = KEY_Quote;
+//common_scanmap[219]                = KEY_LBrace;
+//common_scanmap[221]                = KEY_RBrace;
 
 common_scanmap[91]                 = 0xE05B; //KEY_LMeta
 common_scanmap[92]                 = 0xE05C; //KEY_RMeta
@@ -211,16 +211,59 @@ common_scanmap[93]                 = 0xE05D; //KEY_Menu
 
 /* Firefox/Mozilla codes */
 var firefox_scanmap = [];
-firefox_scanmap[173]                = KEY_Minus;
+//firefox_scanmap[173]                = KEY_Minus;
 firefox_scanmap[109]                = KEY_Minus;
 firefox_scanmap[61]                 = KEY_Equal;
 firefox_scanmap[59]                 = KEY_SemiColon;
 
 /* DOM3 codes */
 var DOM_scanmap = [];
-DOM_scanmap[189]                = KEY_Minus;
-DOM_scanmap[187]                = KEY_Equal;
-DOM_scanmap[186]                = KEY_SemiColon;
+//DOM_scanmap[189]                = KEY_Minus;
+//DOM_scanmap[187]                = KEY_Equal;
+//DOM_scanmap[186]                = KEY_SemiColon;
+
+/* PC-104 Spanish Keyboard */
+var pc104_es_map = [];
+pc104_es_map[186]               = [0x29];                     // Masculine
+pc104_es_map[170]               = [KEY_ShiftL, 0x29];         // Femenine
+pc104_es_map[92]                = [KEY_LCtrl, KEY_Alt, 0x29]; // Backslash
+pc104_es_map[241]               = [0x27];                     // LC N-tilde
+pc104_es_map[209]               = [KEY_ShiftL, 0x27];         // UP N-tilde
+pc104_es_map[39]                = [0x0c];                     // '
+pc104_es_map[63]                = [KEY_ShiftL, 0x0c];         // ?
+pc104_es_map[161]               = [0x0d];                     // ¡
+pc104_es_map[191]               = [KEY_ShiftL, 0x0d];         // ¿
+pc104_es_map[96]                = [0x1a];                     // `
+pc104_es_map[94]                = [KEY_ShiftL, 0x1a];         // ^
+pc104_es_map[91]                = [KEY_LCtrl, KEY_Alt, 0x1a]; // [
+pc104_es_map[43]                = [0x1b];                     // +
+pc104_es_map[42]                = [KEY_ShiftL, 0x1b];         // *
+pc104_es_map[93]                = [KEY_LCtrl, KEY_Alt, 0x1b]; // ]
+pc104_es_map[123]               = [KEY_LCtrl, KEY_Alt, 0x28]; // {
+pc104_es_map[125]               = [KEY_LCtrl, KEY_Alt, 0x2b]; // }
+pc104_es_map[231]               = [0x2b];                     // ç
+pc104_es_map[199]               = [KEY_ShiftL, 0x2b];         // Ç
+pc104_es_map[45]                = [0x35];                     // -
+pc104_es_map[95]                = [KEY_ShiftL, 0x35];         // _
+pc104_es_map[60]                = [0x56];                     // <
+pc104_es_map[62]                = [KEY_ShiftL, 0x56];         // >
+
+var pc104_es_tilde_map = [];
+pc104_es_tilde_map[224]         = [KEY_BackSpace, 0x1a, 0x1e]; // à
+pc104_es_tilde_map[232]         = [KEY_BackSpace, 0x1a, 0x12]; // è
+pc104_es_tilde_map[236]         = [KEY_BackSpace, 0x1a, 0x17]; // ì
+pc104_es_tilde_map[242]         = [KEY_BackSpace, 0x1a, 0x18]; // ò
+pc104_es_tilde_map[249]         = [KEY_BackSpace, 0x1a, 0x16]; // ù
+
+pc104_es_tilde_map[225]         = [KEY_BackSpace, 0x28, 0x1e]; // á
+pc104_es_tilde_map[233]         = [KEY_BackSpace, 0x28, 0x12]; // é
+pc104_es_tilde_map[237]         = [KEY_BackSpace, 0x28, 0x17]; // í
+pc104_es_tilde_map[243]         = [KEY_BackSpace, 0x28, 0x18]; // ó
+pc104_es_tilde_map[250]         = [KEY_BackSpace, 0x28, 0x16]; // ú
+
+pc104_es_tilde_map[252]         = [KEY_BackSpace, 0x28, 0x16]; // ü
+pc104_es_tilde_map[220]         = [KEY_BackSpace, 0x28, 0x16]; // Ü
+
 
 function get_scancode(code)
 {
@@ -235,12 +278,22 @@ function get_scancode(code)
         return common_scanmap[code];
 }
 
+function get_codelist_from_char(code)
+{
+    return pc104_es_map[code];
+}
+
+function get_codelist_from_tilde_char(code)
+{
+    return pc104_es_tilde_map[code];
+}
+
 function keycode_to_start_scan(code)
 {
     var scancode = get_scancode(code);
     if (scancode === undefined)
     {
-        alert('no map for ' + code);
+        console.log('no map for ' + code);
         return 0;
     }
 

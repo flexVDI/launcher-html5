@@ -160,8 +160,107 @@ function handle_mousewheel(e)
     e.preventDefault();
 }
 
+function send_key(ctx, codelist)
+{
+    var codelistLength = codelist.length;
+
+    for (var i = 0; i < codelistLength; i++) {
+        var code = codelist[i];
+
+        var key = new SpiceMsgcKeyDown();
+        key.code = code;
+        var msg = new SpiceMiniData();
+
+        msg.build_msg(SPICE_MSGC_INPUTS_KEY_DOWN, key);
+        ctx.sc.inputs.send_msg(msg);
+    }
+
+    for (var i = codelistLength - 1; i >= 0; i--) {
+        var code = codelist[i];
+
+        var key = new SpiceMsgcKeyUp();
+        key.code = 0x80 | code;
+        var msg = new SpiceMiniData();
+
+        msg.build_msg(SPICE_MSGC_INPUTS_KEY_UP, key);
+        ctx.sc.inputs.send_msg(msg);
+    }
+}
+
+function send_tilde_key(ctx, charcode, codelist)
+{
+    var codelistLength = codelist.length;
+
+    var code = codelist[2];
+    var key = new SpiceMsgcKeyUp();
+    key.code = 0x80 | code;
+    var msg = new SpiceMiniData();
+    msg.build_msg(SPICE_MSGC_INPUTS_KEY_UP, key);
+    ctx.sc.inputs.send_msg(msg);
+
+    var releaseShift = false;
+
+    for (var i = 0; i < codelistLength; i++) {
+        var code = codelist[i];
+
+        if (charcode == 252) {
+            if (i == 1) {
+                key = new SpiceMsgcKeyDown();
+                key.code = KEY_ShiftL;
+                msg.build_msg(SPICE_MSGC_INPUTS_KEY_DOWN, key);
+                ctx.sc.inputs.send_msg(msg);
+            } else if (i == 2) {
+                key = new SpiceMsgcKeyUp();
+                key.code = 0x80 | KEY_ShiftL;
+                msg.build_msg(SPICE_MSGC_INPUTS_KEY_UP, key);
+                ctx.sc.inputs.send_msg(msg);
+            }
+        } else if (charcode == 200 && i == 1) {
+            key = new SpiceMsgcKeyDown();
+            key.code = KEY_ShiftL;
+            msg.build_msg(SPICE_MSGC_INPUTS_KEY_DOWN, key);
+            ctx.sc.inputs.send_msg(msg);
+            releaseShift = true;
+        }
+
+        key = new SpiceMsgcKeyDown();
+        key.code = code;
+        msg.build_msg(SPICE_MSGC_INPUTS_KEY_DOWN, key);
+        ctx.sc.inputs.send_msg(msg);
+
+        key = new SpiceMsgcKeyUp();
+        key.code = 0x80 | code;
+        msg.build_msg(SPICE_MSGC_INPUTS_KEY_UP, key);
+        ctx.sc.inputs.send_msg(msg);
+    }
+
+    if (releaseShift) {
+        key = new SpiceMsgcKeyUp();
+        key.code = 0x80 | KEY_ShiftL;
+        msg.build_msg(SPICE_MSGC_INPUTS_KEY_UP, key);
+        ctx.sc.inputs.send_msg(msg);
+    }
+}
+
+function handle_keypress(e)
+{
+    console.log("Keypress: " + e.charCode);
+    var codelist = get_codelist_from_char(e.charCode);
+    if (codelist === undefined) {
+        codelist = get_codelist_from_tilde_char(e.charCode);
+        if (codelist != undefined) {
+           send_tilde_key(this, e.charCode, codelist);
+        }
+    } else {
+        send_key(this, codelist); 
+    }
+
+    e.preventDefault();
+}
+
 function handle_keydown(e)
 {
+    console.log("Keydown: " + e.keyCode)
     var key = new SpiceMsgcKeyDown(e)
     var msg = new SpiceMiniData();
     check_and_update_modifiers(e, key.code, this.sc);
@@ -169,11 +268,13 @@ function handle_keydown(e)
     if (this.sc && this.sc.inputs && this.sc.inputs.state === "ready")
         this.sc.inputs.send_msg(msg);
 
-    e.preventDefault();
+    if (e.keyCode == 8 || Ctrl_state || Alt_state)
+        e.preventDefault();
 }
 
 function handle_keyup(e)
 {
+    console.log("Keyup: " + e.keyCode)
     var key = new SpiceMsgcKeyUp(e)
     var msg = new SpiceMiniData();
     check_and_update_modifiers(e, key.code, this.sc);
@@ -181,7 +282,8 @@ function handle_keyup(e)
     if (this.sc && this.sc.inputs && this.sc.inputs.state === "ready")
         this.sc.inputs.send_msg(msg);
 
-    e.preventDefault();
+    if (e.keyCode == 8 || Ctrl_state || Alt_state)
+        e.preventDefault();
 }
 
 function sendCtrlAltDel()

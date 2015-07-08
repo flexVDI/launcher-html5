@@ -710,6 +710,7 @@ SpiceDisplayConn.prototype.hook_events = function()
         canvas.addEventListener('mousedown', handle_mousedown);
         canvas.addEventListener('contextmenu', handle_contextmenu);
         canvas.addEventListener('mouseup', handle_mouseup);
+        addEventListener('keypress', handle_keypress);
         canvas.addEventListener('keydown', handle_keydown);
         canvas.addEventListener('keyup', handle_keyup);
         canvas.addEventListener('mouseout', handle_mouseout);
