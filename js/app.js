@@ -32,6 +32,7 @@ jQuery(function($){
 	//var pass = $('#pass_login').val();
 	var resolution = $('#resolution option:selected').data('res');
 	createCookie('resolution', resolution, 360);
+        createCookie('hwaddress', $('#hwaddress').val(), 1);
 	//$('#pass_login').val(pass.trim());
 	$('#user_login').val(user.trim());
 	$('#res').val(resolution);
@@ -73,9 +74,9 @@ jQuery(function($){
 		    });
 		    $('#msgbox').dialog("option","title","Seleccione un escritorio");
 		    $('#msgbox').dialog("open");
-		} else {
+		} else if (data.status === "Error") {
 		    $( "#msgerr" ).dialog( "option","title","Error");
-		    $( '#msgerr' ).html('<p style="margin-top:1em" class="msg-error">No hay escritorios disponibles. Por favor, inténtelo más tarde.</p>');
+		    $( '#msgerr' ).html('<p style="margin-top:1em" class="msg-error">' + data.message + '</p>');
 		    $( "#msgerr" ).dialog( "open" );
 		}
 	    })
@@ -127,6 +128,7 @@ jQuery(function($){
 		authenticate();
 	    }
 	    else{
+		$( "#user_login" ).focus();
 		$( "#msgerr" ).dialog( "option","title","Error");
 		$( '#msgerr' ).html('<p style="margin-top:1em" class="msg-error">Debe introducir Usuario y Password</p>');
 		$( "#msgerr" ).dialog( "open" );

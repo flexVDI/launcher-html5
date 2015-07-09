@@ -22,12 +22,11 @@
    --------------------------------------------------
 
 -->
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
 
-<!doctype html>
-<html>
-    <head>
-
-        <title>flexVM Client</title>
+        <title>flexVDI WebPortal</title>
         <script src="spicearraybuffer.js"></script> 
         <script src="enums.js"></script> 
         <script src="atKeynames.js"></script> 
@@ -56,7 +55,7 @@
         <script src="ticket.js"></script>
         <script src="resize.js"></script>
         <script src="filexfer.js"></script>
-        <link rel="stylesheet" type="text/css" href="spice.css" />
+        <link rel="stylesheet" type="text/css" href="spice.css">
 
         <script>
             var host = null, port = null;
@@ -131,14 +130,14 @@
                 if (sc) {
                     sc.stop();
                 }
-                document.getElementById('connectButton').innerHTML = "Start";
-                document.getElementById('connectButton').onclick = connect;
+                alert("Se perdi\u00f3 la conexi\u00f3n con su escritorio. A continuaci\u00f3n le redirigiremos a la p\u00e1gina de entrada.");
+                document.location.href='..';
                 if (window.File && window.FileReader && window.FileList && window.Blob)
                 {
-                    var spice_xfer_area = document.getElementById('spice-xfer-area');
-                    document.getElementById('spice-area').removeChild(spice_xfer_area);
-                    document.getElementById('spice-area').removeEventListener('dragover', handle_file_dragover, false);
-                    document.getElementById('spice-area').removeEventListener('drop', handle_file_drop, false);
+                    //var spice_xfer_area = document.getElementById('spice-xfer-area');
+                    //document.getElementById('spice-area').removeChild(spice_xfer_area);
+                    //document.getElementById('spice-area').removeEventListener('dragover', handle_file_dragover, false);
+                    //document.getElementById('spice-area').removeEventListener('drop', handle_file_drop, false);
                 }
                 console.log("<< disconnect");
             }
@@ -163,6 +162,57 @@
                     console.log("File API is not supported");
                 }
             }
+
+            function toggleMenuBar()
+            {
+                if (document.getElementById("login").className == "") {
+                    document.getElementById("login").className = "hidden";
+                    document.getElementById("menubarbutton").firstChild.data = "Fijar Menu";
+                } else {
+                    document.getElementById("login").className = "";
+                    document.getElementById("menubarbutton").firstChild.data = "Ocultar Menu";
+                }
+            }
+            function showMenuBar()
+            {
+                if (document.getElementById("login").className == "hidden") {
+                    document.getElementById("login").className = "hidden-peek";
+                }
+            }
+            function hideMenuBar()
+            {
+                if (document.getElementById("login").className == "hidden-peek") {
+                    document.getElementById("login").className = "hidden";
+                }
+            }
+            function closeSession()
+            {
+                if (sc) {
+                    sc.stop();
+                }
+                document.location.href='..';
+            }
+            function showClientID()
+            {
+                var hwaddress = read_cookie("hwaddress");
+                alert("El identificador de este navegador es: " + hwaddress);
+            }
+            function toggleFullScreen(elem)
+            {
+                if ((document.fullScreenElement !== undefined && document.fullScreenElement === null) || (document.msFullscreenElement !== undefined && document.msFullscreenElement === null) || (document.mozFullScreen !== undefined && !document.mozFullScreen) || (document.webkitIsFullScreen !== undefined && !document.webkitIsFullScreen)) {
+                    if (elem.mozRequestFullScreen) {
+                        elem.mozRequestFullScreen();
+                    } else {
+                        alert("Este navegador no soporta el cambio automatico a pantalla completa. Por favor, pulse F11 para cambiar de forma manual");
+                    }
+                    document.getElementById("fullscreen").firstChild.data = "Ventana Normal";
+                } else {
+                    if (document.mozCancelFullScreen) {
+                        document.mozCancelFullScreen();
+                    }
+                    document.getElementById("fullscreen").firstChild.data = "Pantalla Completa";
+                }
+            }
             connect();
         </script>
 
@@ -170,16 +220,22 @@
 
     <body>
 
-        <!-- <div id="login">
-            <span class="logo">flexVM Client</span>
-            <button id="connectButton" onclick="connect();">Desconectar</button>
-        </div> -->
+        <div id="login" onMouseOver="showMenuBar();" onMouseOut="hideMenuBar();">
+            <span class="logo"></span>
+            <div class="float-right">
+                <button id="menubarbutton" onclick="toggleMenuBar();">Ocultar Menu</button>
+                <button id="fullscreen" onclick="toggleFullScreen(document.body);">Pantalla Completa</button>
+                <button id="ctrlaltdel" onclick="sendCtrlAltDel();">Enviar Ctrl+Alt+Del</button>
+                <button id="showclientid" onclick="showClientID();">Mostrar Id</button>
+                <button id="close" onclick="closeSession();">&nbsp</button>
+            </div>
+        </div>
 
         <div id="spice-area">
             <div id="spice-screen" class="spice-screen"></div>
         </div>
 
-        <div id="message-div" class="spice-message"></div>
+        <div id="message-div" class="spice-message"><p class="spice-message-info">Connected to ws://demo01.flexvdi.es/?token=15968</p><p class="spice-message-warning">keyboard channel is insecure</p><p class="spice-message-warning">Unimplemented function 108(Inval All Palettes) [ further notices suppressed ]</p><p class="spice-message-warning">Unimplemented function 102(Display Mark) [ further notices suppressed ]</p></div>
 
         <!-- <div id="debug-div"> -->
         <!-- If DUMPXXX is turned on, dumped images will go here -->
@@ -196,5 +252,6 @@
             document.getElementById("spice-screen").style.width = width.toString() + 'px';
             document.getElementById("spice-screen").style.height = height.toString() + 'px';
         </script>
-    </body>
-</html>
+    
+
+</body></html>
