@@ -242,6 +242,14 @@ function send_tilde_key(ctx, charcode, codelist)
     }
 }
 
+function should_prevent(e)
+{
+    if ((Ctrl_state || Alt_state) && !(Ctrl_state && Alt_state))
+        return true;
+
+    return is_keycode_in_prevent_map(e.keyCode);
+}
+
 function handle_keypress(e)
 {
     console.log("Keypress: " + e.charCode);
@@ -268,7 +276,7 @@ function handle_keydown(e)
     if (this.sc && this.sc.inputs && this.sc.inputs.state === "ready")
         this.sc.inputs.send_msg(msg);
 
-    if (e.keyCode == 8 || Ctrl_state || Alt_state)
+    if (should_prevent(e))
         e.preventDefault();
 }
 
@@ -282,7 +290,7 @@ function handle_keyup(e)
     if (this.sc && this.sc.inputs && this.sc.inputs.state === "ready")
         this.sc.inputs.send_msg(msg);
 
-    if (e.keyCode == 8 || Ctrl_state || Alt_state)
+    if (should_prevent(e))
         e.preventDefault();
 }
 
@@ -298,11 +306,12 @@ function sendCtrlAltDel()
         key.code = KEY_KP_Decimal;
         msg.build_msg(SPICE_MSGC_INPUTS_KEY_DOWN, key);
         sc.inputs.send_msg(msg);
+        key.code = 0x80 | KEY_KP_Decimal;
         msg.build_msg(SPICE_MSGC_INPUTS_KEY_UP, key);
         sc.inputs.send_msg(msg);
 
-        if(Ctrl_state == false) update_modifier(false, KEY_LCtrl, sc);
-        if(Alt_state == false) update_modifier(false, KEY_Alt, sc);
+        update_modifier(false, KEY_LCtrl, sc);
+        update_modifier(false, KEY_Alt, sc);
     }
 }
 

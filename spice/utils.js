@@ -158,19 +158,19 @@ common_scanmap[123]                = KEY_F12;
 /* These externded scancodes do not line up with values from atKeynames */
 common_scanmap[42]                 = 99;
 common_scanmap[19]                 = 101;    // Break
-common_scanmap[111]                = 0xE035; // KP_Divide
-common_scanmap[106]                = 0xE037; // KP_Multiply
-common_scanmap[36]                 = 0xE047; // Home
-common_scanmap[38]                 = 0xE048; // Up
-common_scanmap[33]                 = 0xE049; // PgUp
-common_scanmap[37]                 = 0xE04B; // Left
-common_scanmap[39]                 = 0xE04D; // Right
-common_scanmap[35]                 = 0xE04F; // End
-common_scanmap[40]                 = 0xE050; // Down
-common_scanmap[34]                 = 0xE051; // PgDown
-common_scanmap[45]                 = 0xE052; // Insert
-common_scanmap[46]                 = 0xE053; // Delete
-common_scanmap[44]                 = 0x2A37; // Print
+//common_scanmap[111]                = 0xE035; // KP_Divide
+//common_scanmap[106]                = 0x37; // KP_Multiply
+common_scanmap[36]                 = 0x47; // Home
+common_scanmap[38]                 = 0x48; // Up
+common_scanmap[33]                 = 0x49; // PgUp
+common_scanmap[37]                 = 0x4B; // Left
+common_scanmap[39]                 = 0x4D; // Right
+common_scanmap[35]                 = 0x4F; // End
+common_scanmap[40]                 = 0x50; // Down
+common_scanmap[34]                 = 0x51; // PgDown
+common_scanmap[45]                 = 0x52; // Insert
+common_scanmap[46]                 = 0x53; // Delete
+//common_scanmap[44]                 = 0x2A37; // Print
 
 /* These are not common between ALL browsers but are between Firefox and DOM3 */
 common_scanmap['1'.charCodeAt(0)]  = KEY_1;
@@ -190,13 +190,13 @@ common_scanmap[105]                = KEY_KP_9;
 common_scanmap[100]                = KEY_KP_4;
 common_scanmap[101]                = KEY_KP_5;
 common_scanmap[102]                = KEY_KP_6;
-common_scanmap[107]                = KEY_KP_Plus;
+//common_scanmap[107]                = KEY_KP_Plus;
 common_scanmap[97]                 = KEY_KP_1;
 common_scanmap[98]                 = KEY_KP_2;
 common_scanmap[99]                 = KEY_KP_3;
 common_scanmap[96]                 = KEY_KP_0;
 common_scanmap[110]                = KEY_KP_Decimal;
-//common_scanmap[191]                = KEY_Slash;
+//common_scanmap[111]                = KEY_Slash;
 common_scanmap[190]                = KEY_Period;
 common_scanmap[188]                = KEY_Comma;
 //common_scanmap[220]                = KEY_BSlash;
@@ -212,9 +212,9 @@ common_scanmap[93]                 = 0xE05D; //KEY_Menu
 /* Firefox/Mozilla codes */
 var firefox_scanmap = [];
 //firefox_scanmap[173]                = KEY_Minus;
-firefox_scanmap[109]                = KEY_Minus;
-firefox_scanmap[61]                 = KEY_Equal;
-firefox_scanmap[59]                 = KEY_SemiColon;
+//firefox_scanmap[109]                = KEY_Minus;
+//firefox_scanmap[61]                 = KEY_Equal;
+//firefox_scanmap[59]                 = KEY_SemiColon;
 
 /* DOM3 codes */
 var DOM_scanmap = [];
@@ -247,6 +247,7 @@ pc104_es_map[45]                = [0x35];                     // -
 pc104_es_map[95]                = [KEY_ShiftL, 0x35];         // _
 pc104_es_map[60]                = [0x56];                     // <
 pc104_es_map[62]                = [KEY_ShiftL, 0x56];         // >
+pc104_es_map[47]                = [KEY_ShiftL, 0x08];         // /
 
 var pc104_es_tilde_map = [];
 pc104_es_tilde_map[224]         = [KEY_BackSpace, 0x1a, 0x1e]; // à
@@ -263,6 +264,29 @@ pc104_es_tilde_map[250]         = [KEY_BackSpace, 0x28, 0x16]; // ú
 
 pc104_es_tilde_map[252]         = [KEY_BackSpace, 0x28, 0x16]; // ü
 pc104_es_tilde_map[220]         = [KEY_BackSpace, 0x28, 0x16]; // Ü
+
+var prevent_map = [];
+prevent_map[8]                  = true; // BackSpace
+prevent_map[9]                  = true; // Tab
+prevent_map[27]                 = true; // Esc
+prevent_map[112]                = true; // F1
+prevent_map[113]                = true; // F2
+prevent_map[114]                = true; // F3
+prevent_map[115]                = true; // F4
+prevent_map[116]                = true; // F5
+prevent_map[117]                = true; // F6
+prevent_map[118]                = true; // F7
+prevent_map[119]                = true; // F8
+prevent_map[120]                = true; // F9
+prevent_map[121]                = true; // F10
+prevent_map[37]                 = true; // Left
+prevent_map[38]                 = true; // Up
+prevent_map[39]                 = true; // Right
+prevent_map[40]                 = true; // Down
+prevent_map[33]                 = true; // PgUp
+prevent_map[34]                 = true; // PgDown
+prevent_map[35]                 = true; // End
+prevent_map[36]                 = true; // Begin
 
 
 function get_scancode(code)
@@ -316,3 +340,12 @@ function keycode_to_end_scan(code)
         return 0x80e0 | ((scancode - 0x100) << 8);
     }
 }
+
+function is_keycode_in_prevent_map(code)
+{
+    if (prevent_map[code] != undefined)
+        return true;
+
+    return false;
+}
+
