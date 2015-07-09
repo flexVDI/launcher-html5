@@ -202,10 +202,10 @@
                 if ((document.fullScreenElement !== undefined && document.fullScreenElement === null) || (document.msFullscreenElement !== undefined && document.msFullscreenElement === null) || (document.mozFullScreen !== undefined && !document.mozFullScreen) || (document.webkitIsFullScreen !== undefined && !document.webkitIsFullScreen)) {
                     if (elem.mozRequestFullScreen) {
                         elem.mozRequestFullScreen();
+                        document.getElementById("fullscreen").firstChild.data = "Ventana Normal";
                     } else {
                         alert("Este navegador no soporta el cambio automatico a pantalla completa. Por favor, pulse F11 para cambiar de forma manual");
                     }
-                    document.getElementById("fullscreen").firstChild.data = "Ventana Normal";
                 } else {
                     if (document.mozCancelFullScreen) {
                         document.mozCancelFullScreen();
@@ -213,6 +213,13 @@
                     document.getElementById("fullscreen").firstChild.data = "Pantalla Completa";
                 }
             }
+            document.addEventListener("mouseout", function(e) {
+                e = e ? e : window.event;
+                var from = e.relatedTarget || e.toElement;
+                if (!from || from.nodeName == "HTML") {
+                    showMenuBar();
+                }
+            });
             connect();
         </script>
 
