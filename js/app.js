@@ -89,7 +89,7 @@ jQuery(function($){
     }
 
     $(document).ready(function(){
-	$('#user_login').focus();
+           
 	var uuid = readCookie('uuid');
 	if (uuid == null) {
 	    uuid = guid();
@@ -118,6 +118,7 @@ jQuery(function($){
 		}
 	    }
 	});
+	$('#user_login').focus();
 	$('#bot').on('click',function(e){
 	    e.preventDefault();
 	    $('#desktop').val("");
@@ -131,10 +132,16 @@ jQuery(function($){
 		$( "#msgerr" ).dialog( "open" );
 	    }
 	});
+	$('#reset').on('click',function(e){
+            history.go(-1);
+	});
 	$("#pass_login").keyup(function(event){
 	    if(event.keyCode == 13){
 		$("#bot").click();
 	    }
 	});
+	if ($('#autologin').val() == 'yes') {
+            $("#bot").click();
+        }
     });
 });
