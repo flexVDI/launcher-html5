@@ -203,6 +203,7 @@
                     if (elem.mozRequestFullScreen) {
                         elem.mozRequestFullScreen();
                         document.getElementById("fullscreen").firstChild.data = "Ventana Normal";
+                        toggleMenuBar();             
                     } else {
                         alert("Este navegador no soporta el cambio automatico a pantalla completa. Por favor, pulse F11 para cambiar de forma manual");
                     }
@@ -252,10 +253,8 @@
             var resolution = read_cookie("resolution")
             var width = resolution.substring(0, resolution.indexOf('x'));
             var height = resolution.substring(resolution.indexOf('x') + 1);
-            var w = parseInt(width) + 20;
-            var h = parseInt(height) + 20;
-            document.getElementById("spice-area").style.width = w.toString() + 'px';
-            document.getElementById("spice-area").style.height = h.toString() + 'px';
+            document.getElementById("spice-area").style.width = width.toString() + 'px';
+            document.getElementById("spice-area").style.height = height.toString() + 'px';
             document.getElementById("spice-screen").style.width = width.toString() + 'px';
             document.getElementById("spice-screen").style.height = height.toString() + 'px';
         </script>

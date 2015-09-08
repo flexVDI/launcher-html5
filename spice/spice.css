@@ -106,20 +106,20 @@ body
     padding: 0;
     margin-left: auto;
     margin-right: auto;
-    border: solid #222222 1px;
-    -webkit-box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.2);
-    -moz-box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.2);
-    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.2);
-    -moz-border-radius: 10px;
-    -webkit-border-radius: 10px;
-    border-radius: 10px;
+    //border: solid #222222 1px;
+    //-webkit-box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.2);
+    //-moz-box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.2);
+    //box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.2);
+    //-moz-border-radius: 10px;
+    //-webkit-border-radius: 10px;
+    //border-radius: 10px;
     cursor: none;
 }
 .spice-screen
 {
     min-height: 600px;
     height: 100%;
-    margin: 10px;
+    //margin: 10px;
     padding: 0;
     background-color: #333333;
 }

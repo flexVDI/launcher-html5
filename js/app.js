@@ -1,4 +1,72 @@
 jQuery(function($){
+    var resolutions = [{w:2560, h:1600},
+		       {w:2560, h:1440},
+		       {w:2048, h:1536},
+		       {w:1920, h:1440},
+		       {w:1920, h:1200},
+		       {w:1920, h:1080},
+		       {w:1600, h:1200},
+		       {w:1680, h:1050},
+		       {w:1400, h:1050},
+		       {w:1600, h:900},
+		       {w:1280, h:1024},
+		       {w:1440, h:900},
+		       {w:1280, h:960},
+		       {w:1366, h:768},
+		       {w:1360, h:768},
+		       {w:1280, h:800},
+		       {w:1152, h:870},
+		       {w:1152, h:864},
+		       {w:1280, h:768},
+		       {w:1280, h:760},
+		       {w:1280, h:720},
+		       {w:1024, h:768},
+		       {w:1024, h:600},
+		       {w:960, h:640},
+		       {w:832, h:624},
+		       {w:800, h:600},
+		       {w:800, h:480},
+		       {w:640, h:480}];
+
+    function getBestResolution(width, height, windowed) {
+	var reslength = resolutions.length;
+	var bestres_item = -1;
+	var bestres_width_diff = -1;
+	var bestres_width_height = -1;
+
+	for (var i = 0; i < reslength; ++i) {
+	    testres = resolutions[i];
+	    width_diff = Math.abs(testres.w - width);
+	    height_diff = Math.abs(testres.h - height);
+
+	    if (bestres_item == -1) {
+		if (!windowed || (testres.w <= width && testres.h <= height)) {
+		    bestres_item = i;
+		    bestres_width_diff = width_diff;
+		    bestres_height_diff = height_diff;
+		}
+	    } else if (!windowed && width_diff == 0 && height_diff == 0) {
+		return testres.w + "x" + testres.h;
+	    } else if (width_diff < bestres_width_diff) {
+		if (!windowed || (testres.w <= width && testres.h <= height)) {
+		    bestres_item = i;
+		    bestres_width_diff = width_diff;
+		    bestres_height_diff = height_diff;
+		}
+	    } else if (width_diff == bestres_width_diff &&
+		       height_diff < bestres_height_diff) {
+		if (!windowed || (testres.w <= width && testres.h <= height)) {
+		    bestres_item = i;
+		    bestres_width_diff = width_diff;
+		    bestres_height_diff = height_diff;
+		}
+	    }
+	}
+
+	var bestres = resolutions[bestres_item];
+	return bestres.w + "x" + bestres.h;
+    }
+			
     $.fn.serializeObject = function()
     {
 	var o = {};
@@ -29,8 +97,11 @@ jQuery(function($){
     function authenticate() {
 	var managerAPI = "php/proxy.php";
 	var user = $('#user_login').val();
-	//var pass = $('#pass_login').val();
-	var resolution = $('#resolution option:selected').data('res');
+	if (document.getElementById('nativeres').checked) {
+            var resolution = getBestResolution(screen.width, screen.height, false);
+	} else {
+	    var resolution = getBestResolution($(window).width(), $(window).height(), true);
+	}
 	createCookie('resolution', resolution, 360);
         createCookie('hwaddress', $('#hwaddress').val(), 1);
 	//$('#pass_login').val(pass.trim());
