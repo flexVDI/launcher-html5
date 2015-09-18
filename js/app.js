@@ -63,8 +63,12 @@ jQuery(function($){
 	    }
 	}
 
-	var bestres = resolutions[bestres_item];
-	return bestres.w + "x" + bestres.h;
+	if (bestres_item == -1) {
+	    return "";
+	} else {
+	    var bestres = resolutions[bestres_item];
+	    return bestres.w + "x" + bestres.h;
+	}
     }
 			
     $.fn.serializeObject = function()
@@ -95,29 +99,39 @@ jQuery(function($){
     }
 
     function authenticate() {
-	var managerAPI = "php/proxy.php";
+	var managerAPI = "/vdi/desktop";
 	var user = $('#user_login').val();
+	
 	if (document.getElementById('nativeres').checked) {
             var resolution = getBestResolution(screen.width, screen.height, false);
 	} else {
 	    var resolution = getBestResolution($(window).width(), $(window).height(), true);
 	}
+	if (resolution == "") {
+	    $( "#msgerr" ).dialog( "option","title","Error");
+	    $( '#msgerr' ).html('<p style="margin-top:1em" class="msg-error">La ventana del navegador es demasiado pequeña.</p>');
+	    $( "#msgerr" ).dialog( "open" );
+	    return;
+	    
+	}
+	
 	createCookie('resolution', resolution, 360);
         createCookie('hwaddress', $('#hwaddress').val(), 1);
-	//$('#pass_login').val(pass.trim());
+	
 	$('#user_login').val(user.trim());
 	$('#res').val(resolution);
-	var request = JSON.stringify($('#loginform').serializeObject());
+	var request = JSON.stringify({"hwaddress": $('#hwaddress').val(), "username": $('#user_login').val(), "password": $('#pass_login').val(), "desktop": $('#desktop').val(), "resolution": resolution});
 	
-	$.post(managerAPI,{data:request})
+	$.post(managerAPI, request)
 	    .done(function(data){
-		if (data.status === "OK") {
+		var response = JSON.parse(data);
+		if (response.status === "OK") {
 		    eraseCookie("token");
-		    createCookie("token",JSON.stringify(data),1);
+		    createCookie("token",JSON.stringify(response),1);
 		    document.location.href='spice/console.html';
-		} else if (data.status === "Pending") {
+		} else if (response.status === "Pending") {
 		    setTimeout(authenticate(), 10000);
-		} else if (data.status === "SelectDesktop") {
+		} else if (response.status === "SelectDesktop") {
 		    $( "#menu" ).menu({
 			select: function( event, ui ) { 
 			    var desktop_name = ui.item.text();
@@ -136,8 +150,6 @@ jQuery(function($){
 				desktop = "opensuseKDE_public";
 				break;
 			    }
-			    //var tmp2 = tmp.substring(tmp.indexOf('#') + 1)
-			    //var desktop_name = tmp2.substring(0, tmp2.indexOf('>') - 1)
 			    $('#desktop').val(desktop);
 			    authenticate();
 			    $('#msgbox').dialog("close");
@@ -145,9 +157,9 @@ jQuery(function($){
 		    });
 		    $('#msgbox').dialog("option","title","Seleccione un escritorio");
 		    $('#msgbox').dialog("open");
-		} else if (data.status === "Error") {
+		} else if (response.status === "Error") {
 		    $( "#msgerr" ).dialog( "option","title","Error");
-		    $( '#msgerr' ).html('<p style="margin-top:1em" class="msg-error">' + data.message + '</p>');
+		    $( '#msgerr' ).html('<p style="margin-top:1em" class="msg-error">' + response.message + '</p>');
 		    $( "#msgerr" ).dialog( "open" );
 		}
 	    })
