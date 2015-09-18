@@ -121,6 +121,7 @@ jQuery(function($){
 	$('#user_login').val(user.trim());
 	$('#res').val(resolution);
 	var request = JSON.stringify({"hwaddress": $('#hwaddress').val(), "username": $('#user_login').val(), "password": $('#pass_login').val(), "desktop": $('#desktop').val(), "resolution": resolution});
+	var desktopList = null;
 	
 	$.post(managerAPI, request)
 	    .done(function(data){
@@ -132,23 +133,51 @@ jQuery(function($){
 		} else if (response.status === "Pending") {
 		    setTimeout(authenticate(), 10000);
 		} else if (response.status === "SelectDesktop") {
+		    desktopList = JSON.parse(response.message);
+		    var i = 0;
+		    
+		    for (var key in desktopList) {
+			if (desktopList[key] != "") {
+			    var text = desktopList[key];
+			} else {
+			    var text = key;
+			}
+			
+			switch (i) {
+			case 0:
+			    $('#entry1').val(key);
+			    $('#entry1').text(text);
+			    break;
+			case 1:
+			    $('#entry2').val(key);
+			    $('#entry2').text(text);
+			    break;
+			case 2:
+			    $('#entry3').val(key);
+			    $('#entry3').text(text);
+			    break;
+			case 3:
+			    $('#entry4').val(key);
+			    $('#entry4').text(text);
+			    break;
+			default:
+			    $( "#msgerr" ).dialog( "option","title","Error");
+			    $( '#msgerr' ).html('<p style="margin-top:1em" class="msg-error">Su política tiene demasiados Escritorios</p>');
+			    $( "#msgerr" ).dialog( "open" );
+			    return;
+			}
+			i++;
+		    }
+			
 		    $( "#menu" ).menu({
-			select: function( event, ui ) { 
-			    var desktop_name = ui.item.text();
-			    var desktop = "windowsXP_public";
-			    switch (desktop_name) {
-				case "Windows XP SP3":
-				desktop = "windowsXP_public";
-				break;
-				case "Windows 7":
-				desktop = "windows7_public";
-				break;
-				case "OpenSuSE 13.2 (GNOME)":
-				desktop = "opensuseGNOME_public";
-				break;
-				case "OpenSuSE 13.2 (KDE)":
-				desktop = "opensuseKDE_public";
-				break;
+			select: function( event, ui ) {
+			    var item = ui.item.text();
+			    var desktop = "";
+			    for (var key in desktopList) {
+				if (key == item || desktopList[key] == item) {
+				    desktop = key;
+				    break;
+				}
 			    }
 			    $('#desktop').val(desktop);
 			    authenticate();
@@ -158,9 +187,6 @@ jQuery(function($){
 		    $('#msgbox').dialog("option","title","Seleccione un escritorio");
 		    $('#msgbox').dialog("open");
 		} else if (response.status === "Error") {
-		    $( "#msgerr" ).dialog( "option","title","Error");
-		    $( '#msgerr' ).html('<p style="margin-top:1em" class="msg-error">' + response.message + '</p>');
-		    $( "#msgerr" ).dialog( "open" );
 		}
 	    })
 	    .fail(function(jqXHR){
