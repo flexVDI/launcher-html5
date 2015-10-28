@@ -27,6 +27,8 @@ var Shift_state = -1;
 var Ctrl_state = -1;
 var Alt_state = -1;
 var Meta_state = -1;
+var NumLock_state = false;
+var CapsLock_state = false;
 
 /*----------------------------------------------------------------------------
 **  SpiceInputsConn
@@ -334,8 +336,36 @@ function update_modifier(state, code, sc)
     sc.inputs.send_msg(msg);
 }
 
+function toggle_lock_key(lkey, sc)
+{
+    console.log("toggling lock key");
+    var msg = new SpiceMiniData();
+    var key = new SpiceMsgcKeyDown();
+    key.code = lkey;
+    msg.build_msg(SPICE_MSGC_INPUTS_KEY_DOWN, key);
+    sc.inputs.send_msg(msg);
+
+    key = new SpiceMsgcKeyUp();
+    key.code = 0x80 | lkey;
+    msg.build_msg(SPICE_MSGC_INPUTS_KEY_UP, key);
+    sc.inputs.send_msg(msg);
+}
+
 function check_and_update_modifiers(e, code, sc)
 {
+    var num_state = e.getModifierState("NumLock");
+    var caps_state = e.getModifierState("CapsLock");
+
+    if (num_state != NumLock_state) {
+        NumLock_state = num_state;
+        toggle_lock_key(KEY_NumLock, sc);
+    }
+
+    if (caps_state != CapsLock_state) {
+        CapsLock_state = caps_state;
+        toggle_lock_key(KEY_CapsLock, sc);
+    }
+
     if (Shift_state === -1)
     {
         Shift_state = e.shiftKey;
