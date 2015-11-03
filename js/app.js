@@ -102,7 +102,7 @@ jQuery(function($){
 	var managerAPI = "/vdi/desktop";
 	var user = $('#user_login').val();
 	
-	if (document.getElementById('nativeres').checked) {
+	if (!document.getElementById('nativeres') || document.getElementById('nativeres').checked) {
             var resolution = getBestResolution(screen.width, screen.height, false);
 	} else {
 	    var resolution = getBestResolution($(window).width(), $(window).height(), true);

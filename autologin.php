@@ -17,7 +17,6 @@
       <div class="logotype"><img src="img/general/icon_logo.png"></div>
       <h1 class="clearfix"><span class="logotype"></h1>
       <form class="loginForm" id="loginform" name="loginform" >
-	<input type="hidden" name="resolution" id="res" value="1024x768">
 	<input type="hidden" name="hwaddress" id="hwaddress" value="webclient">
 	<input type="hidden" name="desktop" id="desktop" value="">
 	<input type="hidden" name="username" id="user_login" value="<?php print $_POST["username"]?>">
