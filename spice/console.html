@@ -85,10 +85,16 @@
                 if (data) {
                     data = JSON.parse(data);
 
-                    var scheme = "ws://", uri;
+                    if (document.location.protocol == "https:") {
+                        var scheme = "wss://";
+                        var args = ":443?token=";
+                    } else {
+                        var scheme = "ws://";
+                        var args = ":80?token=";
+                    }
 
-                    uri = scheme + data.spice_address + ":80?token=" + data.spice_port;
-                    password = data.spice_password;
+                    var uri = scheme + data.spice_address + args + data.spice_port;
+                    var password = data.spice_password;
                 } else {
                     var host, port, password, scheme = "ws://", uri;
 
