@@ -160,16 +160,16 @@ common_scanmap[42]                 = 99;
 common_scanmap[19]                 = 101;    // Break
 //common_scanmap[111]                = 0xE035; // KP_Divide
 //common_scanmap[106]                = 0x37; // KP_Multiply
-common_scanmap[36]                 = 0x47; // Home
+common_scanmap[36]                 = 0x66; // Home
 common_scanmap[38]                 = 0x67; // Up
-common_scanmap[33]                 = 0x49; // PgUp
+common_scanmap[33]                 = 0x68; // PgUp
 common_scanmap[37]                 = 0x69; // Left
 common_scanmap[39]                 = 0x6A; // Right
-common_scanmap[35]                 = 0x4F; // End
+common_scanmap[35]                 = 0x6B; // End
 common_scanmap[40]                 = 0x6C; // Down
-common_scanmap[34]                 = 0x51; // PgDown
-common_scanmap[45]                 = 0x52; // Insert
-common_scanmap[46]                 = 0x53; // Delete
+common_scanmap[34]                 = 0x6D; // PgDown
+common_scanmap[45]                 = 0x6E; // Insert
+common_scanmap[46]                 = 0x6F; // Delete
 //common_scanmap[44]                 = 0x2A37; // Print
 
 /* These are not common between ALL browsers but are between Firefox and DOM3 */
