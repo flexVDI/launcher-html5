@@ -100,6 +100,10 @@ jQuery(function($){
 
     function authenticate() {
 	var managerAPI = "/vdi/desktop";
+	if ($('#randed_post').val() == 'yes' || $('#randed_get').val() == 'yes') {
+	    managerAPI = "/html/desktop.php";
+	}
+	
 	var user = $('#user_login').val();
 	
 	if (!document.getElementById('nativeres') || document.getElementById('nativeres').checked) {
@@ -127,9 +131,42 @@ jQuery(function($){
 	    .done(function(data){
 		var response = JSON.parse(data);
 		if (response.status === "OK") {
-		    eraseCookie("token");
-		    createCookie("token",JSON.stringify(response),1);
-		    document.location.href='spice/console.html';
+		    if ($('#randed_post').val() == 'yes') {
+			var p1 = document.createElement('input');
+			p1.name = 'p1';
+			p1.type = 'hidden';
+			p1.value = 'spice';
+			
+			var p2 = document.createElement('input');
+			p2.name = 'p2';
+			p2.type = 'hidden';
+			p2.value = response.spice_address;
+			
+			var p3 = document.createElement('input');
+			p3.name = 'p3';
+			p3.type = 'hidden';
+			p3.value = response.spice_port;
+			
+			var p4 = document.createElement('input');
+			p4.name = 'p4';
+			p4.type = 'hidden';
+			p4.value = response.spice_password;
+
+			var form = document.loginform;
+			form.method = 'post';
+			form.action = '/html/applaunch.php';
+			form.appendChild(p1);
+			form.appendChild(p2);
+			form.appendChild(p3);
+			form.appendChild(p4);
+			form.submit();
+		    } else if ($('#randed_get').val() == 'yes') {
+			document.location.href = '/html/applaunch.php?p1=spice&p2=' + response.spice_address + '&p3=' + response.spice_port + '&p4=' + response.spice_password;
+		    } else {
+			eraseCookie("token");
+			createCookie("token",JSON.stringify(response),1);
+			document.location.href = 'spice/console.html';
+		    }
 		} else if (response.status === "Pending") {
 		    setTimeout(authenticate(), 10000);
 		} else if (response.status === "SelectDesktop") {
@@ -187,6 +224,9 @@ jQuery(function($){
 		    $('#msgbox').dialog("option","title","Seleccione un escritorio");
 		    $('#msgbox').dialog("open");
 		} else if (response.status === "Error") {
+		    $( "#msgerr" ).dialog( "option","title","Error");
+		    $( '#msgerr' ).html('<p style="margin-top:1em" class="msg-error">' + response.message + '</p>');
+		    $( "#msgerr" ).dialog( "open" );
 		}
 	    })
 	    .fail(function(jqXHR){
