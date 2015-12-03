@@ -13,11 +13,14 @@ $context = stream_context_create(array(
     )
 ));
 
-$response = file_get_contents('https://10.111.8.11/vdi/desktop', FALSE, $context);
+// Ajustar esta IP para que apunte a la direccion interna del Manager
+$response = file_get_contents('https://MANAGERIP/vdi/desktop', FALSE, $context);
 $data = json_decode($response, TRUE);
 
-if ($data["spice_address"] == "demo01.flexvdi.com") {
-    $data["spice_address"] = "pruebagmv.com";
+// Como randed necesita acceder a las IPs internas, y no soporte proxificado
+// HTTPS, hay que meter manualmente la relacion IPs publicas a internas.
+if ($data["spice_address"] == "IPPUBLICADELHOST") {
+    $data["spice_address"] = "IPINTERNADELHOST";
 } else if ($data["spice_address"] == "192.168.0.1") {
     $data["spice_address"] = "10.111.1.1";
 }

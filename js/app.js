@@ -154,14 +154,14 @@ jQuery(function($){
 
 			var form = document.loginform;
 			form.method = 'post';
-			form.action = '/html/applaunch.php';
+			form.action = 'https://RANDEDIP/applaunch';
 			form.appendChild(p1);
 			form.appendChild(p2);
 			form.appendChild(p3);
 			form.appendChild(p4);
 			form.submit();
 		    } else if ($('#randed_get').val() == 'yes') {
-			document.location.href = '/html/applaunch.php?p1=spice&p2=' + response.spice_address + '&p3=' + response.spice_port + '&p4=' + response.spice_password;
+			document.location.href = 'https://RANDEDIP/applaunch?p1=spice&p2=' + response.spice_address + '&p3=' + response.spice_port + '&p4=' + response.spice_password;
 		    } else {
 			eraseCookie("token");
 			createCookie("token",JSON.stringify(response),1);
