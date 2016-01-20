@@ -104,6 +104,8 @@ SpiceCursorConn.prototype.set_cursor = function(cursor)
         cursor.header.hot_spot_x + ' ' + cursor.header.hot_spot_y + ", default";
     var screen = document.getElementById(this.parent.screen_id);
     screen.style.cursor = 'auto';
+    if (curstr == '')
+        return;
     screen.style.cursor = curstr;
     if (window.getComputedStyle(screen, null).cursor == 'auto')
         SpiceSimulateCursor.simulate_cursor(this, cursor, screen, pngstr);

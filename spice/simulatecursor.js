@@ -66,7 +66,8 @@ simulate_cursor: function (spicecursor, cursor, screen, pngstr)
         if (typeof SpiceSimulateCursor.cursors[cursor_sha] != 'undefined')
         {
             var curstr = 'url(' + SpiceSimulateCursor.cursors[cursor_sha] + '), default';
-            screen.style.cursor = curstr;
+            if (curstr != '')
+                screen.style.cursor = curstr;
         }
 
     if (window.getComputedStyle(screen, null).cursor == 'auto')
