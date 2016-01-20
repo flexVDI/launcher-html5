@@ -63,7 +63,7 @@
 
             function spice_error(e)
             {
-                disconnect();
+                //disconnect();
             }
 
             function read_cookie(name) {
@@ -136,16 +136,13 @@
                 if (sc) {
                     sc.stop();
                 }
-                alert("Se perdi\u00f3 la conexi\u00f3n con su escritorio. A continuaci\u00f3n le redirigiremos a la p\u00e1gina de entrada.");
-                document.location.href='..';
-                if (window.File && window.FileReader && window.FileList && window.Blob)
-                {
-                    //var spice_xfer_area = document.getElementById('spice-xfer-area');
-                    //document.getElementById('spice-area').removeChild(spice_xfer_area);
-                    //document.getElementById('spice-area').removeEventListener('dragover', handle_file_dragover, false);
-                    //document.getElementById('spice-area').removeEventListener('drop', handle_file_drop, false);
+                //alert("Se perdi\u00f3 la conexi\u00f3n con su escritorio. A continuaci\u00f3n le redirigiremos a la p\u00e1gina de entrada.");
+                if (document.getElementById("fullscreen").firstChild.data == "Ventana Normal") {
+                    toggleFullScreen(document.body);
                 }
-                console.log("<< disconnect");
+
+                document.getElementById("overlay").style.visibility = "visible";
+                document.getElementById("dialog-end").style.visibility = "visible";
             }
 
             function agent_connected(sc)
@@ -196,28 +193,34 @@
                 if (sc) {
                     sc.stop();
                 }
-                document.location.href='..';
+                if (document.getElementById("fullscreen").firstChild.data == "Ventana Normal") {
+                    toggleFullScreen(document.body);
+                }
+
+                document.getElementById("overlay").style.visibility = "visible";
+                document.getElementById("dialog-end").style.visibility = "visible";
             }
             function showClientID()
             {
                 var hwaddress = read_cookie("hwaddress");
                 alert("El identificador de este navegador es: " + hwaddress);
             }
+            var progFS = false;
+            var isFS = false;
+            var wasFS = false;
             function toggleFullScreen(elem)
             {
                 if ((document.fullScreenElement !== undefined && document.fullScreenElement === null) || (document.msFullscreenElement !== undefined && document.msFullscreenElement === null) || (document.mozFullScreen !== undefined && !document.mozFullScreen) || (document.webkitIsFullScreen !== undefined && !document.webkitIsFullScreen)) {
                     if (elem.mozRequestFullScreen) {
                         elem.mozRequestFullScreen();
-                        document.getElementById("fullscreen").firstChild.data = "Ventana Normal";
-                        toggleMenuBar();             
                     } else {
                         alert("Este navegador no soporta el cambio automatico a pantalla completa. Por favor, pulse F11 para cambiar de forma manual");
                     }
                 } else {
                     if (document.mozCancelFullScreen) {
+                        progFS = true;
                         document.mozCancelFullScreen();
                     }
-                    document.getElementById("fullscreen").firstChild.data = "Pantalla Completa";
                 }
             }
             document.addEventListener("mouseout", function(e) {
@@ -227,6 +230,50 @@
                     showMenuBar();
                 }
             });
+            function overlayAction(fullscreen)
+            {
+                document.getElementById("overlay").style.visibility = "hidden";
+                document.getElementById("dialog-fs").style.visibility = "hidden";
+                if (fullscreen) {
+                    toggleMenuBar();
+                    toggleFullScreen(document.body);
+                }
+            }
+            function closeAction(close)
+            {
+                document.getElementById("overlay").style.visibility = "hidden";
+                document.getElementById("dialog-close").style.visibility = "hidden";
+                if (close) {
+                    closeSession();
+                } else if (wasFS) {
+                    wasFS = false;
+                    toggleFullScreen(document.body);
+                }
+            }
+            function showCloseDialog()
+            {
+                document.getElementById("overlay").style.visibility = "visible";
+                document.getElementById("dialog-close").style.visibility = "visible";
+            }
+            function isFullScreen() {
+                isFS = true;
+                document.getElementById("fullscreen").firstChild.data = "Ventana Normal";
+            }
+
+            function notFullScreen() {
+                isFS = false;
+                document.getElementById("fullscreen").firstChild.data = "Pantalla Completa";
+                if (progFS) {
+                    progFS = false;
+                } else {
+                    wasFS = true;
+                    showCloseDialog();
+                }
+            }
+            document.addEventListener("mozfullscreenchange", function () {
+                (document.mozFullScreen) ? isFullScreen() : notFullScreen();
+            }, false);
+
             connect();
         </script>
 
@@ -241,7 +288,7 @@
                 <button id="fullscreen" onclick="toggleFullScreen(document.body);">Pantalla Completa</button>
                 <button id="ctrlaltdel" onclick="sendCtrlAltDel();">Enviar Ctrl+Alt+Del</button>
                 <button id="showclientid" onclick="showClientID();">Mostrar Id</button>
-                <button id="close" onclick="closeSession();">&nbsp</button>
+                <button id="close" onclick="showCloseDialog();">&nbsp</button>
             </div>
         </div>
 
@@ -255,14 +302,46 @@
         <!-- If DUMPXXX is turned on, dumped images will go here -->
         <!-- </div> -->
 
+        <div id="overlay">
+        </div>
+        <div id="dialog-fs" class="overlay-dialog">
+           <div id="dialog-fs-text" class="overlay-text">
+               La aplicación solicita permiso para acceder a su Escritorio VDI en modo Pantalla Completa.
+           </div>
+           <div id="dialog-fs-input" class="overlay-input">
+               <button class="float-right" type="button" onclick="overlayAction(false)">Cancelar</button>
+               <button class="float-right" type="button" onclick="overlayAction(true)">Aceptar</button>
+           </div>
+        </div>
+        <div id="dialog-close" class="overlay-dialog">
+           <div id="dialog-close-text" class="overlay-text">
+               Su sesión de VDI se cerrará. Asegúrsese de que ha guardado los cambios en sus documentos.
+           </div>
+           <div id="dialog-close-input" class="overlay-input">
+               <button class="float-right" type="button" onclick="closeAction(false)">Cancelar</button>
+               <button class="float-right" type="button" onclick="closeAction(true)">Aceptar</button>
+           </div>
+        </div>
+        <div id="dialog-end" class="overlay-dialog">
+           <div id="dialog-end-text" class="overlay-text-end">
+               Su sesión de VDI se ha finalizado. Por favor, cierre esta ventana.
+           </div>
+        </div>
+
         <script>
-            var resolution = read_cookie("resolution")
+            var resolution = read_cookie("resolution");
             var width = resolution.substring(0, resolution.indexOf('x'));
             var height = resolution.substring(resolution.indexOf('x') + 1);
             document.getElementById("spice-area").style.width = width.toString() + 'px';
             document.getElementById("spice-area").style.height = height.toString() + 'px';
             document.getElementById("spice-screen").style.width = width.toString() + 'px';
             document.getElementById("spice-screen").style.height = height.toString() + 'px';
+
+            var fsmode = read_cookie("fsmode");
+            if (fsmode == "true") {
+                document.getElementById("overlay").style.visibility = "visible";
+                document.getElementById("dialog-fs").style.visibility = "visible";
+            }
         </script>
     
 

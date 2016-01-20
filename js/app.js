@@ -108,8 +108,10 @@ jQuery(function($){
 	
 	if (!document.getElementById('nativeres') || document.getElementById('nativeres').checked) {
             var resolution = getBestResolution(screen.width, screen.height, false);
+            var fsmode = true;
 	} else {
 	    var resolution = getBestResolution($(window).width(), $(window).height(), true);
+            var fsmode = false;
 	}
 	if (resolution == "") {
 	    $( "#msgerr" ).dialog( "option","title","Error");
@@ -120,6 +122,7 @@ jQuery(function($){
 	}
 	
 	createCookie('resolution', resolution, 360);
+	createCookie('fsmode', fsmode, 360);
         createCookie('hwaddress', $('#hwaddress').val(), 1);
 	
 	$('#user_login').val(user.trim());
