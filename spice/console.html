@@ -258,11 +258,13 @@
             function isFullScreen() {
                 isFS = true;
                 document.getElementById("fullscreen").firstChild.data = "Ventana Normal";
+                document.getElementById("menubarbutton").style.visibility = "hidden";
             }
 
             function notFullScreen() {
                 isFS = false;
                 document.getElementById("fullscreen").firstChild.data = "Pantalla Completa";
+                document.getElementById("menubarbutton").style.visibility = "visible";
                 if (progFS) {
                     progFS = false;
                 } else {
@@ -315,7 +317,7 @@
         </div>
         <div id="dialog-close" class="overlay-dialog">
            <div id="dialog-close-text" class="overlay-text">
-               Su sesión de VDI se cerrará. Por favor, asegúrsese de que ha guardado sus cambios.
+               Su sesión de VDI se cerrará. Por favor, asegúrese de que ha guardado sus cambios.
            </div>
            <div id="dialog-close-input" class="overlay-input">
                <button class="float-right" type="button" onclick="closeAction(false)">Cancelar</button>
