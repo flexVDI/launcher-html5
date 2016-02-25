@@ -55,7 +55,7 @@ SpiceCursorConn.prototype.process_channel_message = function(msg)
         DEBUG > 1 && console.log("SpiceMsgCursorSet");
         if (cursor_set.flags & SPICE_CURSOR_FLAGS_NONE)
         {
-            document.getElementById(this.parent.screen_id).style.cursor = "none";
+            document.getElementById(this.parent.screen_id).style.cursor = 'url(img/transparent-pixel.png),default';
             return true;
         }
 
@@ -76,7 +76,7 @@ SpiceCursorConn.prototype.process_channel_message = function(msg)
     if (msg.type == SPICE_MSG_CURSOR_HIDE)
     {
         DEBUG > 1 && console.log("SpiceMsgCursorHide");
-        document.getElementById(this.parent.screen_id).style.cursor = "none";
+        document.getElementById(this.parent.screen_id).style.cursor = 'url(img/transparent-pixel.png),default';
         return true;
     }
 
@@ -103,9 +103,6 @@ SpiceCursorConn.prototype.set_cursor = function(cursor)
     var curstr = 'url(data:image/png,' + pngstr + ') ' + 
         cursor.header.hot_spot_x + ' ' + cursor.header.hot_spot_y + ", default";
     var screen = document.getElementById(this.parent.screen_id);
-    screen.style.cursor = 'auto';
-    if (curstr == '')
-        return;
     screen.style.cursor = curstr;
     if (window.getComputedStyle(screen, null).cursor == 'auto')
         SpiceSimulateCursor.simulate_cursor(this, cursor, screen, pngstr);
