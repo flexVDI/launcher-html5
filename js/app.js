@@ -124,6 +124,8 @@ jQuery(function($){
 	createCookie('resolution', resolution, 360);
 	createCookie('fsmode', fsmode, 360);
         createCookie('hwaddress', $('#hwaddress').val(), 1);
+	createCookie('username', $('#user_login').val(), 1);
+	createCookie('password', $('#pass_login').val(), 1);
 	
 	$('#user_login').val(user.trim());
 	$('#res').val(resolution);

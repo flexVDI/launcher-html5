@@ -255,6 +255,16 @@
                 document.getElementById("overlay").style.visibility = "visible";
                 document.getElementById("dialog-close").style.visibility = "visible";
             }
+            function showExtWin()
+            {
+                document.getElementById("overlay").style.visibility = "visible";
+                document.getElementById("extwin").style.visibility = "visible";
+            }
+            function hideExtWin()
+            {
+                document.getElementById("overlay").style.visibility = "hidden";
+                document.getElementById("extwin").style.visibility = "hidden";
+            }
             function isFullScreen() {
                 isFS = true;
                 document.getElementById("fullscreen").firstChild.data = "Ventana Normal";
@@ -286,6 +296,7 @@
         <div id="login" onMouseOver="showMenuBar();" onMouseOut="hideMenuBar();">
             <span class="logo"></span>
             <div class="float-right">
+                <button id="uploadfile" onclick="showExtWin();">Subir Fichero</button>
                 <button id="menubarbutton" onclick="toggleMenuBar();">Ocultar Menu</button>
                 <button id="fullscreen" onclick="toggleFullScreen(document.body);">Pantalla Completa</button>
                 <button id="ctrlaltdel" onclick="sendCtrlAltDel();">Enviar Ctrl+Alt+Del</button>
@@ -330,6 +341,15 @@
            </div>
         </div>
 
+        <div id="extwin">
+           <div id="extwin-title" class="extwin-title">
+               <button id="extwin-close" onclick="hideExtWin();">&nbsp</button>
+           </div>
+           <iframe src="extwin.html"></iframe>
+        </div>
+
+        <script type="text/javascript" src="extwin.js"></script>
+
         <script>
             var resolution = read_cookie("resolution");
             var width = resolution.substring(0, resolution.indexOf('x'));
@@ -343,6 +363,18 @@
             if (fsmode == "true") {
                 document.getElementById("overlay").style.visibility = "visible";
                 document.getElementById("dialog-fs").style.visibility = "visible";
+            }
+
+            if (exturl == null || exturl == "") {
+                document.getElementById("uploadfile").style.visibility = "hidden";
+            }
+
+            if (extwidth != null && extwidth != "") {
+                document.getElementById("extwin").style.width = extwidth;
+            }
+
+            if (extheight != null && extheight != "") {
+                document.getElementById("extwin").style.height = extheight;
             }
         </script>
     
