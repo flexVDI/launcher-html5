@@ -39,27 +39,29 @@
       createCookie(name, "", -1);
     }
 
-    var username = readCookie("username");
-    var password = readCookie("password");
+    if (exturl != null && exturl != "") {
+      var username = readCookie("username");
+      var password = readCookie("password");
 
-    eraseCookie("username");
-    eraseCookie("password");
+      eraseCookie("username");
+      eraseCookie("password");
 
-    var parm_user = document.createElement('input');
-    parm_user.name = 'username';
-    parm_user.type = 'hidden';
-    parm_user.value = username;
+      var parm_user = document.createElement('input');
+      parm_user.name = 'username';
+      parm_user.type = 'hidden';
+      parm_user.value = username;
 			
-    var parm_pass = document.createElement('input');
-    parm_pass.name = 'otp';
-    parm_pass.type = 'hidden';
-    parm_pass.value = password;
+      var parm_pass = document.createElement('input');
+      parm_pass.name = 'otp';
+      parm_pass.type = 'hidden';
+      parm_pass.value = password;
 
-    var form = document.loginform;
-    form.method = 'post';
-    form.action = exturl;
-    form.appendChild(parm_user);
-    form.appendChild(parm_pass);
-    form.submit();
+      var form = document.loginform;
+      form.method = 'post';
+      form.action = exturl;
+      form.appendChild(parm_user);
+      form.appendChild(parm_pass);
+      form.submit();
+   }
   </script>
 </body>
