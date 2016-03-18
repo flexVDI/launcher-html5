@@ -170,7 +170,11 @@ jQuery(function($){
 		    } else {
 			eraseCookie("token");
 			createCookie("token",JSON.stringify(response),1);
-			document.location.href = 'spice/console.html';
+			if (navigator.appVersion.indexOf("Win") != -1) {
+			    document.location.href = 'spice/console.html';
+			} else {
+			    document.location.href = 'spicemac/console.html';
+			}
 		    }
 		} else if (response.status === "Pending") {
 		    setTimeout(authenticate(), 10000);
