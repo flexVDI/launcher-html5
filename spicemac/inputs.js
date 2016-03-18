@@ -347,11 +347,13 @@ function handle_keypress(e)
 function handle_keydown(e)
 {
     console.log("Keydown: " + e.keyCode)
-    if (is_keycode_in_prevent_map(e.keyCode) || e.ctrlKey || e.keyCode == 18) {
-        if (e.keyCode != 18) {
-            var key = new SpiceMsgcKeyDown(e)
+    check_and_update_modifiers(e, this.sc);
+    if (is_keycode_in_prevent_map(e.keyCode) || e.ctrlKey) {
+        var key = new SpiceMsgcKeyDown(e)
+        if (e.keyCode != KEY_ShiftL &&
+            e.keyCode != KEY_Alt &&
+            e.keyCode != KEY_LCtrl) {
             var msg = new SpiceMiniData();
-            check_and_update_modifiers(e, key.code, this.sc);
             msg.build_msg(SPICE_MSGC_INPUTS_KEY_DOWN, key);
             if (this.sc && this.sc.inputs && this.sc.inputs.state === "ready")
                 this.sc.inputs.send_msg(msg);
@@ -364,11 +366,13 @@ function handle_keydown(e)
 function handle_keyup(e)
 {
     console.log("Keyup: " + e.keyCode)
-    if (is_keycode_in_prevent_map(e.keyCode) || e.ctrlKey || e.keyCode == 18) {
-        if (e.keyCode != 18) {
-            var key = new SpiceMsgcKeyUp(e)
+    check_and_update_modifiers(e, this.sc);
+    if (is_keycode_in_prevent_map(e.keyCode) || e.ctrlKey) {
+        var key = new SpiceMsgcKeyUp(e)
+        if (e.keyCode != KEY_ShiftL &&
+            e.keyCode != KEY_Alt &&
+            e.keyCode != KEY_LCtrl) {
             var msg = new SpiceMiniData();
-            check_and_update_modifiers(e, key.code, this.sc);
             msg.build_msg(SPICE_MSGC_INPUTS_KEY_UP, key);
             if (this.sc && this.sc.inputs && this.sc.inputs.state === "ready")
                 this.sc.inputs.send_msg(msg);
@@ -433,7 +437,7 @@ function toggle_lock_key(lkey, sc)
     sc.inputs.send_msg(msg);
 }
 
-function check_and_update_modifiers(e, code, sc)
+function check_and_update_modifiers(e, sc)
 {
     var num_state = e.getModifierState("NumLock");
     var caps_state = e.getModifierState("CapsLock");
@@ -456,27 +460,6 @@ function check_and_update_modifiers(e, code, sc)
         Meta_state = e.metaKey;
     }
 
-    if (code === KEY_ShiftL)
-        Shift_state = true;
-/*
-    else if (code === KEY_Alt)
-        Alt_state = true;
-*/
-    else if (code === KEY_LCtrl)
-        Ctrl_state = true;
-    else if (code === 0xE0B5)
-        Meta_state = true;
-    else if (code === (0x80|KEY_ShiftL))
-        Shift_state = false;
-/*
-    else if (code === (0x80|KEY_Alt))
-        Alt_state = false;
-*/
-    else if (code === (0x80|KEY_LCtrl))
-        Ctrl_state = false;
-    else if (code === (0x80|0xE0B5))
-        Meta_state = false;
-
     if (sc && sc.inputs && sc.inputs.state === "ready")
     {
         if (Shift_state != e.shiftKey)
@@ -485,14 +468,12 @@ function check_and_update_modifiers(e, code, sc)
             update_modifier(e.shiftKey, KEY_ShiftL, sc);
             Shift_state = e.shiftKey;
         }
-/*
         if (Alt_state != e.altKey)
         {
             console.log("Alt state out of sync");
             update_modifier(e.altKey, KEY_Alt, sc);
             Alt_state = e.altKey;
         }
-*/
         if (Ctrl_state != e.ctrlKey)
         {
             console.log("Ctrl state out of sync");
