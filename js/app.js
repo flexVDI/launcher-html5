@@ -170,11 +170,14 @@ jQuery(function($){
 		    } else {
 			eraseCookie("token");
 			createCookie("token",JSON.stringify(response),1);
+			document.location.href = 'spice-web-client/index.html';
+			/*
 			if (navigator.appVersion.indexOf("Win") != -1) {
-			    document.location.href = 'spice/console.html';
+			    document.location.href = 'spice-web-client/index.html';
 			} else {
-			    document.location.href = 'spicemac/console.html';
+			    document.location.href = 'spice-web-client/index.html?host=' + response.spice_address + '&port=' + response.spice_port + '&token=' + response.spice_password;
 			}
+			*/
 		    }
 		} else if (response.status === "Pending") {
 		    setTimeout(authenticate(), 10000);
