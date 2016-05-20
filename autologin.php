@@ -6,7 +6,6 @@
   <meta name="keywords" content="flexVDI">
   <meta name="author" content="flexVDI">
   <link rel="shortcut icon" href="favicon.ico">
-  <link rel="apple-touch-icon-precomposed" href="apple-touch-icon.png">
   <link rel="stylesheet/less" href="./less/main.less" type="text/css" />
   <link rel="stylesheet" href="./css/jquery-ui-menu.css" />
   <script src="./lib/less/less-1.7.0.min.js"></script>
