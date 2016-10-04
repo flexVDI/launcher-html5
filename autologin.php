@@ -56,10 +56,10 @@ version 3 along with this program in the file "LICENSE".  If not, see
   </div>
   <div id="msgbox" title="Envio correcto" style="display:none">
     <ul id="menu">
-      <li><a href="#">Windows XP SP3</a></li>
-      <li><a href="#">Windows 7</a></li>
-      <li><a href="#">OpenSuSE 13.2 (GNOME)</a></li>
-      <li><a href="#">OpenSuSE 13.2 (KDE)</a></li>
+      <li><a href="#" id="entry1"></a></li>
+      <li><a href="#" id="entry2"></a></li>
+      <li><a href="#" id="entry3"></a></li>
+      <li><a href="#" id="entry4"></a></li>
     </ul>
   </div>
   <div id="msgerr" title="Error" style="display:none" />
